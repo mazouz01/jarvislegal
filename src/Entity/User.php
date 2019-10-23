@@ -1,16 +1,26 @@
 <?php
-
+/**
+ * (c) AZOUZ Mohamadi <mohamadi.azouz@gmail.com>
+ *
+ */
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     collectionOperations={"get", "post"},
+ *     itemOperations={"get", "put", "delete"},
+ *     normalizationContext={"groups"={"user:read"}},
+ *     denormalizationContext={"groups"={"user:write"}}
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
 class User
 {
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -20,23 +30,34 @@ class User
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"user:read", "user:write"})
      */
     private $firstname;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"user:read", "user:write"})
      */
     private $lastname;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"user:read"})
      */
-    private $creationdate;
+    private $creationdate ;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"user:read"})
      */
-    private $updatedate;
+    private $updatedate ;
+
+
+    public function __construct()
+    {
+        $this->updatedate = new \DateTimeImmutable();
+        $this->creationdate = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
@@ -90,4 +111,6 @@ class User
 
         return $this;
     }
+
+
 }
